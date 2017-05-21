@@ -40,6 +40,14 @@ module_level_variable2 = 98765
 
 The docstring may span multiple lines. The type may optionally be specified
 on the first line, separated by a colon.
+
+Example:
+          A mask of ``[[2, 1, 1], [1, 1, 0]]`` describes a batch of two
+          sequences. The first has three elements, of which the first element
+          (2) signals the beginning of a sequence. The second sequence has two
+          elements (last element marked 'invalid' by '0'). As it starts with
+          (1), it is a continuation of the 2nd sequence in the previous
+          minibatch.
 """
 
 
@@ -56,6 +64,33 @@ def function_with_types_in_docstring(param1, param2):
 
     Returns:
         bool: The return value. True for success, False otherwise.
+
+    Example:
+            >>> num_classes = 6
+            >>> sparse_indices = [[1,C.Value.ONE_HOT_SKIP,5],[4]]
+            >>> i0 = C.sequence.input(shape=num_classes, is_sparse=True)
+            >>> z = C.times(i0, np.eye(num_classes))
+            >>> value = C.Value.one_hot(sparse_indices, num_classes)
+            >>> z.eval({i0: value})
+            [array([[ 0.,  1.,  0.,  0.,  0.,  0.],
+                    [ 0.,  0.,  0.,  0.,  0.,  0.],
+                    [ 0.,  0.,  0.,  0.,  0.,  1.]], dtype=float32),
+             array([[ 0.,  0.,  0.,  0.,  1.,  0.]], dtype=float32)]
+            <BLANKLINE>
+            >>> num_classes = 6
+            >>> sample_shape = (2, num_classes)
+            >>> sparse_indices = [[1,5,3,2],[4,1]]
+            >>> i0 = C.sequence.input(shape=sample_shape, is_sparse=True)
+            >>> z = C.times(i0, np.eye(num_classes))
+            >>> value = C.Value.one_hot(sparse_indices, sample_shape)
+            >>> z.eval({i0: value})
+            [array([[[ 0.,  1.,  0.,  0.,  0.,  0.],
+                     [ 0.,  0.,  0.,  0.,  0.,  1.]],
+                    [[ 0.,  0.,  0.,  1.,  0.,  0.],
+                     [ 0.,  0.,  1.,  0.,  0.,  0.]]], dtype=float32),
+             array([[[ 0.,  0.,  0.,  0.,  1.,  0.],
+                     [ 0.,  1.,  0.,  0.,  0.,  0.]]], dtype=float32)]
+
 
     .. _PEP 484:
         https://www.python.org/dev/peps/pep-0484/
